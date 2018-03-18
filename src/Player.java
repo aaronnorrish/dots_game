@@ -102,5 +102,9 @@ public class Player{
 	public void setRightAccel(boolean input){
 		rightAccel = input;
 	}
+	
+	public boolean checkCollision(Dot d){
+		return ((Math.pow(centreX - d.getCentreX(), 2) + Math.pow(centreY - d.getCentreY(), 2)) <= Math.pow((15 + 5), 2));
+	}
 
 }
