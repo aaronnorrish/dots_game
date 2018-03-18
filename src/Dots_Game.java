@@ -20,18 +20,21 @@ public class Dots extends Applet implements Runnable, KeyListener{
 		gameStarted = false;
 		this.addKeyListener(this);
 		p = new Player();
+		b = new BlueDot();
 		img = createImage(WIDTH, HEIGHT);
 		gfx = img.getGraphics();
 		thread = new Thread(this);
 		thread.start();
 		score = 0;
+		highscore = 0;
 	}
 
 	public void paint(Graphics g){
 		gfx.setColor(Color.WHITE);
 		gfx.fillRect(0, 0, WIDTH, HEIGHT);
 
-	    p.draw(gfx);
+	    	p.draw(gfx);
+		b.draw(gfx);
 
 		if(!gameStarted){
 			gfx.setColor(Color.BLACK);
@@ -50,8 +53,17 @@ public class Dots extends Applet implements Runnable, KeyListener{
 		while(true){
 			if(gameStarted){
 			 	p.move();
+				b.move();
 			}
 
+			if(p.checkCollision(b)){
+			 	score++;
+			 	if(score > highscore){
+					highscore++;
+		 		}
+		 		b.redraw();
+			}
+			
 			repaint();
 
 			try{
