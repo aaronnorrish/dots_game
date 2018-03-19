@@ -11,6 +11,8 @@ public class Dots extends Applet implements Runnable, KeyListener{
 	final int WIDTH = 700, HEIGHT = 500;
 	Thread thread;
 	Player p;
+	BlueDot b;
+	ArrayList<GreenDot> dots;
 	boolean gameStarted;
 	Graphics gfx;
 	Image img;
@@ -21,6 +23,8 @@ public class Dots extends Applet implements Runnable, KeyListener{
 		this.addKeyListener(this);
 		p = new Player();
 		b = new BlueDot();
+		dots = new ArrayList<GreenDot>();
+		dots.add(new GreenDot());
 		img = createImage(WIDTH, HEIGHT);
 		gfx = img.getGraphics();
 		thread = new Thread(this);
@@ -35,7 +39,10 @@ public class Dots extends Applet implements Runnable, KeyListener{
 
 	    	p.draw(gfx);
 		b.draw(gfx);
-
+		for(GreenDot gd : dots){
+			gd.draw(gfx);
+		}
+		
 		if(!gameStarted){
 			gfx.setColor(Color.BLACK);
 			gfx.drawString("Dots", 340, 100);
@@ -54,14 +61,25 @@ public class Dots extends Applet implements Runnable, KeyListener{
 			if(gameStarted){
 			 	p.move();
 				b.move();
-			}
+				for(GreenDot gd : dots){
+					gd.move();
+				}
 
-			if(p.checkCollision(b)){
-			 	score++;
-			 	if(score > highscore){
-					highscore++;
-		 		}
-		 		b.redraw();
+				if(p.checkCollision(b)){
+			 		score++;
+			 		if(score > highscore){
+						highscore++;
+		 			}
+		 			b.redraw();
+					dots.add(new GreenDot());
+				}
+				
+				for(GreenDot gd : dots){
+					if(p.checkCollision(gd)){
+						gameStarted  = false;
+						break;
+						}
+				}
 			}
 			
 			repaint();
