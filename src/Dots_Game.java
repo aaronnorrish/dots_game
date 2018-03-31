@@ -165,7 +165,7 @@ public class Dots extends Applet implements Runnable, KeyListener{
 		}
 	}
 
-	public void checkPowerUpTimer(LocalTime start){
+	private void checkPowerUpTimer(LocalTime start){
 		now = LocalTime.now();
 		if(now.isAfter(start.plusSeconds(3))){
 			powerUp = false;
