@@ -7,17 +7,29 @@ public class Player{
   double xPos, yPos, xVel, yVel, centreX, centreY;
   boolean upAccel, downAccel, leftAccel, rightAccel;
 
+  /**
+  * Constructor for the player object. Initialises the player's starting
+  * position to the middle of the window, with no initial velocity.
+  **/
   public Player(){
 		upAccel = false; downAccel = false;
 		xPos = 350; yPos = 250;
 		xVel = 0; yVel = 0;
 	}
 
+  /**
+  * Draws the player at its current x and y coordinates in the window.
+  * Called by the paint method in the main (Dots) class.
+  **/
   public void draw(Graphics g){
 		g.setColor(Color.BLUE);
 		g.drawOval((int) xPos, (int) yPos, 30, 30);
 	}
 
+  /**
+  * Mutates the position and velocity fields of the player.
+  * Called by the run method in the main (Dots) class.
+  **/
   public void move(){
 		if(upAccel){
 			yVel -= 2;
@@ -87,22 +99,41 @@ public class Player{
 		}
 	}
 
+	/**
+  	* Sets the upAccel field of player to the (boolean) input
+ 	**/
 	public void setUpAccel(boolean input){
 		upAccel = input;
 	}
 
+ 	 /**
+  	* Sets the downAccel field of player to the (boolean) input
+  	**/
 	public void setDownAccel(boolean input){
 		downAccel = input;
 	}
 
+  	/**
+  	* Sets the leftAccel field of player to the (boolean) input
+  	**/
 	public void setLeftAccel(boolean input){
 		leftAccel = input;
 	}
 
+  	/**
+  	* Sets the rightAccel field of player to the (boolean) input
+  	**/
 	public void setRightAccel(boolean input){
 		rightAccel = input;
 	}
-	
+
+  	/**
+   	* Determines whether the player and Dot d have collided. If the distance
+   	* between the player and d is less than the sum of the radii of the respective
+   	* objects, then there must have been a collision, hence return true, otherwise
+   	* return false.
+   	* @return true if the player and dot have collided, false otherwise
+  	**/
 	public boolean checkCollision(Dot d){
 		return ((Math.pow(centreX - d.getCentreX(), 2) + Math.pow(centreY - d.getCentreY(), 2)) <= Math.pow((15 + 5), 2));
 	}
