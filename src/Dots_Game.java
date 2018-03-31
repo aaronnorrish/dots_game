@@ -6,6 +6,8 @@ import java.awt.Image;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.time.LocalTime;
+import java.time.Duration;
 
 public class Dots extends Applet implements Runnable, KeyListener{
 	final int WIDTH = 700, HEIGHT = 500;
@@ -13,75 +15,145 @@ public class Dots extends Applet implements Runnable, KeyListener{
 	Player p;
 	BlueDot b;
 	ArrayList<GreenDot> dots;
-	boolean gameStarted;
+	boolean menu, gameStarted;
 	Graphics gfx;
 	Image img;
+	int score;
+	int highscore;
+	int old_score;
+	boolean powerUp;
+	boolean startTimer;
+	LocalTime start;
+	LocalTime now;
+	ArrayList<Integer> nums;
 
 	public void init(){
 		this.resize(WIDTH, HEIGHT);
+		menu = true;
 		gameStarted = false;
 		this.addKeyListener(this);
-		p = new Player();
-		b = new BlueDot();
-		dots = new ArrayList<GreenDot>();
-		dots.add(new GreenDot());
+		
+		highscore = 0;
 		img = createImage(WIDTH, HEIGHT);
 		gfx = img.getGraphics();
 		thread = new Thread(this);
 		thread.start();
-		score = 0;
-		highscore = 0;
 	}
 
+	
+	public void newGame(){
+		p = new Player();
+		b = new BlueDot();
+		dots = new ArrayList<GreenDot>();
+		dots.add(new GreenDot());
+		score = 0;
+		powerUp = false;
+		startTimer = false;
+	}
+
+	
 	public void paint(Graphics g){
 		gfx.setColor(Color.WHITE);
 		gfx.fillRect(0, 0, WIDTH, HEIGHT);
 
-	    	p.draw(gfx);
-		b.draw(gfx);
-		for(GreenDot gd : dots){
-			gd.draw(gfx);
-		}
-		
-		if(!gameStarted){
+		if(menu){
 			gfx.setColor(Color.BLACK);
 			gfx.drawString("Dots", 340, 100);
 			gfx.drawString("Press Enter to Begin", 310, 130);
+			newGame();
 		}
-
+		else if(gameStarted){
+		    p.draw(gfx);
+			b.draw(gfx);
+			for(GreenDot gd : dots){
+				gd.draw(gfx);
+			}
+			gfx.setColor(Color.BLACK);
+			gfx.drawString("Score", 100, 15);
+			gfx.drawString(String.valueOf(score), 100, 30);
+			gfx.drawString("High Score", 500, 15);
+			gfx.drawString(String.valueOf(highscore), 500, 30);
+			gfx.drawRect(165, 5, 300, 30);
+			gfx.setColor(Color.BLUE);
+			if(!startTimer){
+				gfx.fillRect(166, 6, 299 * (score % 8) /8 , 29);
+			}
+			else{
+				gfx.fillRect(166, 6, 299 * (3000 - (int) (Duration.between(start, now)).toMillis())/3000, 29);
+			}
+		}
+		else if(!gameStarted){
+			gfx.setColor(Color.BLACK);
+			gfx.drawString("Game Over", 340, 100);
+			gfx.drawString("Score: " + String.valueOf(old_score), 340, 115);
+			gfx.drawString("Press Enter to Play Again", 340, 200);
+			newGame();
+		}
 		g.drawImage(img, 0, 0, this);
 	}
 
+	
 	public void update(Graphics g){
 		paint(g);
 	}
 
+	
 	public void run(){
 		while(true){
 			if(gameStarted){
 			 	p.move();
-				b.move();
 				for(GreenDot gd : dots){
 					gd.move();
 				}
-
-				if(p.checkCollision(b)){
+				
+			 	if(p.checkCollision(b)){
 			 		score++;
 			 		if(score > highscore){
-						highscore++;
-		 			}
-		 			b.redraw();
-					dots.add(new GreenDot());
-				}
-				
+			 			highscore++;
+			 		}
+			 		if(score > 0 && score % 8 == 0){
+			 			startTimer = true;
+			 			powerUp = true;
+			 			start = LocalTime.now();
+			 			
+			 		}
+			 		else{
+			 			powerUp = false;
+			 		}
+			 		b.redraw();
+			 		dots.add(new GreenDot());
+			 	}
+			 	
+			 	if(startTimer){
+			 		checkPowerUpTimer(start);
+			 	}
+			 	
+			 	Integer pos = 0;
+			 	if(powerUp){
+			 		nums = new ArrayList<Integer>();
+			 	}
+			 	
 				for(GreenDot gd : dots){
 					if(p.checkCollision(gd)){
-						gameStarted  = false;
-						break;
+						if(!powerUp){
+							gameStarted  = false;
+							old_score = score;
+							break;
 						}
+						else{
+							nums.add(pos);
+						}
+					}
+					pos++;
 				}
 			}
 			
+				if(powerUp){
+					for(Integer num : nums){
+						dots.remove(num.intValue());
+					}
+			}
+
 			repaint();
 
 			try{
@@ -93,6 +165,14 @@ public class Dots extends Applet implements Runnable, KeyListener{
 		}
 	}
 
+	public void checkPowerUpTimer(LocalTime start){
+		now = LocalTime.now();
+		if(now.isAfter(start.plusSeconds(3))){
+			powerUp = false;
+			startTimer = false;
+		}
+	}
+	
 	public void keyPressed(KeyEvent e){
 		 if(e.getKeyCode() == KeyEvent.VK_UP){
 		 	p.setUpAccel(true);
@@ -101,10 +181,10 @@ public class Dots extends Applet implements Runnable, KeyListener{
 		 	p.setDownAccel(true);
 		 }
 		 else if(e.getKeyCode() == KeyEvent.VK_LEFT){
-			 	p.setLeftAccel(true);
+			 p.setLeftAccel(true);
 		}
 		 else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
-			 	p.setRightAccel(true);
+			 p.setRightAccel(true);
 		}
 	}
 
@@ -122,7 +202,8 @@ public class Dots extends Applet implements Runnable, KeyListener{
 			 	p.setRightAccel(false);
 		}
 		 else if(e.getKeyCode() == KeyEvent.VK_ENTER){
-			  gameStarted = true;
+			 menu = false; 
+			 gameStarted = true;
 		}
 	}
 
