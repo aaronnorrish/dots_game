@@ -31,77 +31,70 @@ public class Player{
   * Called by the run method in the main (Dots) class.
   **/
   public void move(){
-		if(upAccel){
-			yVel -= 2;
-		}
+	if(upAccel){
+		yVel -= 2;
+	}
+	else if(downAccel){
+		yVel += 2;
+	}	
+	else if(yVel > 0){
+		yVel -=1;
+	}	
+	else if(yVel < 0){
+		yVel +=1;
+	}
+	  
+	if(leftAccel){
+		xVel -= 2;
+	}
+	else if(rightAccel){
+		xVel += 2;
+	}
+	else if(xVel > 0){
+		xVel -=1;
+	}
+	else if(xVel < 0){
+		xVel +=1;
+	}
 
-		else if(downAccel){
-			yVel += 2;
-		}
-		
-		else if(yVel > 0){
-			yVel -=1;
-		}
-		
-		else if(yVel < 0){
-			yVel +=1;
-		}
+	if(yVel >= 4){
+		yVel = 4;
+	}
+	else if(yVel <= -4){
+		yVel = -4;
+	}
 
-		if(leftAccel){
-			xVel -= 2;
-		}
+    	if(xVel >= 4){
+		xVel = 4;
+	}
+	else if(xVel <= -4){
+		xVel = -4;
+	}
 
-		else if(rightAccel){
-			xVel += 2;
-		}
-		
-		else if(xVel > 0){
-			xVel -=1;
-		}
-		
-		else if(xVel < 0){
-			xVel +=1;
-		}
+	yPos += yVel;
+	xPos += xVel;
+	centreX = xPos + 15;
+	centreY = yPos + 15;
 
-		if(yVel >= 4){
-			yVel = 4;
-		}
-		else if(yVel <= -4){
-			yVel = -4;
-		}
+	if(yPos < 0){
+		yPos = 0;
+	}
 
-    if(xVel >= 4){
-			xVel = 4;
-		}
-		else if(xVel <= -4){
-			xVel = -4;
-		}
+	else if(yPos > 470){
+		yPos = 470;
+	}
 
-		yPos += yVel;
-		xPos += xVel;
-		centreX = xPos + 15;
-		centreY = yPos + 15;
-
-		if(yPos < 0){
-			yPos = 0;
-		}
-
-		else if(yPos > 470){
-			yPos = 470;
-		}
-
-		if(xPos < 0){
-			xPos = 0;
-		}
-
-		else if(xPos > 670){
-			xPos = 670;
-		}
+	if(xPos < 0){
+		xPos = 0;
+	}
+	else if(xPos > 670){
+		xPos = 670;
+	}
 	}
 
 	/**
-  	* Sets the upAccel field of player to the (boolean) input
- 	**/
+	* Sets the upAccel field of player to the (boolean) input
+	**/
 	public void setUpAccel(boolean input){
 		upAccel = input;
 	}
