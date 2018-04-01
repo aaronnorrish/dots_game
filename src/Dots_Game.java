@@ -18,15 +18,14 @@ public class Dots extends Applet implements Runnable, KeyListener{
 	boolean menu, gameStarted;
 	Graphics gfx;
 	Image img;
-	int score;
-	int highscore;
-	int old_score;
-	boolean powerUp;
-	boolean startTimer;
-	LocalTime start;
-	LocalTime now;
+	int highscore, score, old_score;
+	boolean powerUp, startTimer;
+	LocalTime start, now;
 	ArrayList<Integer> nums;
-
+	
+	/**
+	* Initialises applet and associated variables.
+	**/
 	public void init(){
 		this.resize(WIDTH, HEIGHT);
 		menu = true;
@@ -40,7 +39,9 @@ public class Dots extends Applet implements Runnable, KeyListener{
 		thread.start();
 	}
 
-	
+	/**
+	* Initialises a new game and associated (game-specific) variables.
+	**/
 	public void newGame(){
 		p = new Player();
 		b = new BlueDot();
@@ -92,7 +93,9 @@ public class Dots extends Applet implements Runnable, KeyListener{
 		g.drawImage(img, 0, 0, this);
 	}
 
-	
+	/**
+	* Updates the paint method to redraw the graphics display.
+	**/
 	public void update(Graphics g){
 		paint(g);
 	}
@@ -164,7 +167,12 @@ public class Dots extends Applet implements Runnable, KeyListener{
 
 		}
 	}
-
+	
+	/**
+	* A private helper method that checks whether powerUp should still be
+	* enabled. If so, do nothing, otherwise disable powerUp and stop the run
+	* method from calling this method.
+	**/
 	private void checkPowerUpTimer(LocalTime start){
 		now = LocalTime.now();
 		if(now.isAfter(start.plusSeconds(3))){
