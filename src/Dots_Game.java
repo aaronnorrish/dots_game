@@ -52,7 +52,9 @@ public class Dots extends Applet implements Runnable, KeyListener{
 		startTimer = false;
 	}
 
-	
+	/**
+	* Updates the paint method to redraw the graphics display.
+	**/
 	public void paint(Graphics g){
 		gfx.setColor(Color.WHITE);
 		gfx.fillRect(0, 0, WIDTH, HEIGHT);
