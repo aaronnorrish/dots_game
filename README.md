@@ -1,3 +1,3 @@
 # dots_game
 
-A simple java game to practise my skills in java.
+A simple game to practise my java skills.
